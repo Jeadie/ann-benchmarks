@@ -1,0 +1,17 @@
+ARG CHROMA_VERSION=0.3.26
+FROM ghcr.io/chroma-core/chroma:${CHROMA_VERSION}
+
+ARG CHROMA_VERSION=0.3.26
+WORKDIR /home/app
+
+COPY requirements.txt run_algorithm.py ./
+
+RUN python3 -m pip install -r requirements.txt
+RUN python3 -m pip install chromadb==${CHROMA_VERSION}
+
+RUN echo '#!/bin/bash' >> entrypoint.sh
+RUN echo '/docker_entrypoint.sh &' >> entrypoint.sh
+RUN echo 'sleep 5' >> entrypoint.sh
+RUN echo 'python3 -u run_algorithm.py "$@"' >> entrypoint.sh
+RUN chmod u+x entrypoint.sh
+ENTRYPOINT ["/home/app/entrypoint.sh"]
