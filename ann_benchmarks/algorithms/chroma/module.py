@@ -14,13 +14,24 @@ class Chroma(BaseANN):
     def fit(self, X):
         collection = self._client.create_collection(self._collection_name)
         collection.add(
-            X, 
-            [{"i": i} for i in range(len(X))],
-            [uuid.UUID(int=i) for i in range(len(X))]
+            embeddings=X.tolist(), 
+            metadatas=[{"i": i} for i in range(len(X))],
+            ids=[str(uuid.UUID(int=i)) for i in range(len(X))]
         )
 
     def query(self, v, n):
-        return self.get_collection(self._collection_name).query(
-            query_texts=[v],
+        return self._client.get_collection(self._collection_name).query(
+            query_embeddings=[v.tolist()],
+            include=["embeddings"],
             n_results=n
-        ).ids
+        )["embeddings"][0]
+    
+    # def batch_query(self, X, n):
+    #     self.res = self._client.get_collection(self._collection_name).query(
+    #         query_embeddings=X.tolist(),
+    #         include=["embeddings"],
+    #         n_results=n
+    #     )["embeddings"]
+
+    # def get_batch_results(self):
+    #     return self.res
