@@ -1,0 +1,10 @@
+float:
+  any:
+  - base_args: []
+    constructor: Chroma
+    docker_tag: ann-benchmarks-chroma
+    module: ann_benchmarks.algorithms.chroma
+    name: chroma
+    run_groups:
+      empty:
+        args: []
